@@ -1,7 +1,7 @@
 const DEFAULT_SETTINGS = {
   dyslexia: {
     enabled: false,
-    fontFamily: "OpenDyslexic, Comic Sans MS, Trebuchet MS, Verdana, Arial, sans-serif",
+    fontFamily: "OpenDyslexicRegular, OpenDyslexic, Trebuchet MS, Verdana, Arial, sans-serif",
     textSize: 17,
     lineHeight: 1.6,
     boldRandomWords: false,
