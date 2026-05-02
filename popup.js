@@ -8,7 +8,7 @@ const DEFAULT_SETTINGS = {
     boldFrequency: 16,
     removeDecorations: false,
     capitalizeAll: false,
-    textColor: "#5f6670"
+    textColor: "#727982"
   },
   adhd: {
     enabled: false,
@@ -163,8 +163,14 @@ function normalizeFontFamily(fontFamily) {
 }
 
 function mergeSettings(base, updates) {
-  return {
+  const merged = {
     dyslexia: { ...base.dyslexia, ...(updates.dyslexia || {}) },
     adhd: { ...base.adhd, ...(updates.adhd || {}) }
   };
+
+  if ((updates.dyslexia || {}).textSize === 17) {
+    merged.dyslexia.textSize = base.dyslexia.textSize;
+  }
+
+  return merged;
 }
