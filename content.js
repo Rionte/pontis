@@ -1,13 +1,23 @@
 const DEFAULT_SETTINGS = {
   dyslexia: {
     enabled: false,
+<<<<<<< HEAD
     fontFamily: "OpenDyslexic, Comic Sans MS, Trebuchet MS, Verdana, Arial, sans-serif",
     textSize: 18,
+=======
+    fontFamily: "OpenDyslexicRegular, OpenDyslexic, Trebuchet MS, Verdana, Arial, sans-serif",
+    textSize: 17,
+>>>>>>> bf0e028101d6b24bebc0d575116d71fa11c10097
     lineHeight: 1.6,
     boldRandomWords: false,
     boldFrequency: 16,
     removeDecorations: false,
+<<<<<<< HEAD
     textColor: "#727982"
+=======
+    capitalizeAll: false,
+    textColor: "#5f6670"
+>>>>>>> bf0e028101d6b24bebc0d575116d71fa11c10097
   },
   adhd: {
     enabled: false,
@@ -90,6 +100,8 @@ function buildCss(settings) {
   const fontWeight = adhd.enabled ? 600 : 400;
 
   return `
+    @import url("https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/open-dyslexic-regular.css");
+
     html[data-accessease-active] .${TEXT_ELEMENT_CLASS} {
       color: var(--accessease-text-color) !important;
     }
@@ -114,6 +126,8 @@ function buildCss(settings) {
 }
 
 function buildDyslexiaCss(dyslexia) {
+  const textTransform = dyslexia.capitalizeAll ? "uppercase" : "none";
+
   return `
     html[data-accessease-active] .${TEXT_ELEMENT_CLASS} {
       font-family: ${dyslexia.fontFamily} !important;
@@ -121,12 +135,14 @@ function buildDyslexiaCss(dyslexia) {
       line-height: ${dyslexia.lineHeight} !important;
       letter-spacing: 0.01em !important;
       text-align: left !important;
+      text-transform: ${textTransform} !important;
     }
 
     html[data-accessease-active] body *::before,
     html[data-accessease-active] body *::after {
       font-family: ${dyslexia.fontFamily} !important;
       line-height: ${dyslexia.lineHeight} !important;
+      text-transform: ${textTransform} !important;
     }
 
     html[data-accessease-active] .${BOLD_WORD_CLASS} {
@@ -713,7 +729,7 @@ function mergeSettings(base, updates) {
 
 function normalizeFontFamily(fontFamily) {
   const fontStacks = [
-    "OpenDyslexic, Comic Sans MS, Trebuchet MS, Verdana, Arial, sans-serif",
+    "OpenDyslexicRegular, OpenDyslexic, Trebuchet MS, Verdana, Arial, sans-serif",
     "Lexend, Trebuchet MS, Verdana, Arial, sans-serif",
     "Atkinson Hyperlegible, Verdana, Arial, sans-serif",
     "Georgia, Times New Roman, serif",
