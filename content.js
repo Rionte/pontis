@@ -9,12 +9,14 @@ const DEFAULT_SETTINGS = {
     boldFrequency: 16,
     removeDecorations: false,
     capitalizeAll: false,
+    useAutoTextColor: true,
     textColor: "#727982"
   },
   adhd: {
     enabled: false,
     breakBlocks: true,
     blockLength: 280,
+    useAutoTextColor: true,
     textColor: "#111111",
     accentColor: "#005fcc"
   }
@@ -342,15 +344,18 @@ function getReadableTextColor(background, settings) {
 
 // Determine which text color setting to use based on which features are enabled
 function getEffectiveTextColor(settings) {
+  const dyslexiaManualColor = settings.dyslexia.useAutoTextColor ? null : settings.dyslexia.textColor;
+  const adhdManualColor = settings.adhd.useAutoTextColor ? null : settings.adhd.textColor;
+
   if (settings.dyslexia.enabled && settings.adhd.enabled) {
-    return settings.dyslexia.textColor;
+    return dyslexiaManualColor || adhdManualColor || null;
   }
 
   if (settings.adhd.enabled) {
-    return settings.adhd.textColor;
+    return adhdManualColor;
   }
 
-  return settings.dyslexia.textColor;
+  return dyslexiaManualColor;
 }
 
 // Parse a CSS color string (rgb/rgba) into a normalized object for calculations
