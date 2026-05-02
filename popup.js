@@ -7,14 +7,12 @@ const DEFAULT_SETTINGS = {
     boldRandomWords: false,
     boldFrequency: 16,
     removeDecorations: false,
-    background: "#f7f1df",
     textColor: "#5f6670"
   },
   adhd: {
     enabled: false,
     breakBlocks: true,
     blockLength: 280,
-    background: "#ffffff",
     textColor: "#111111",
     accentColor: "#005fcc"
   }
@@ -31,13 +29,11 @@ const elements = {
   dyslexiaBoldFrequency: document.querySelector("#dyslexiaBoldFrequency"),
   dyslexiaBoldFrequencyValue: document.querySelector("#dyslexiaBoldFrequencyValue"),
   dyslexiaRemoveDecorations: document.querySelector("#dyslexiaRemoveDecorations"),
-  dyslexiaBackground: document.querySelector("#dyslexiaBackground"),
   dyslexiaTextColor: document.querySelector("#dyslexiaTextColor"),
   adhdEnabled: document.querySelector("#adhdEnabled"),
   adhdBreakBlocks: document.querySelector("#adhdBreakBlocks"),
   adhdBlockLength: document.querySelector("#adhdBlockLength"),
   adhdBlockLengthValue: document.querySelector("#adhdBlockLengthValue"),
-  adhdBackground: document.querySelector("#adhdBackground"),
   adhdTextColor: document.querySelector("#adhdTextColor"),
   adhdAccentColor: document.querySelector("#adhdAccentColor"),
   resetSettings: document.querySelector("#resetSettings"),
@@ -80,13 +76,11 @@ function renderSettings(settings) {
   elements.dyslexiaBoldRandomWords.checked = settings.dyslexia.boldRandomWords;
   elements.dyslexiaBoldFrequency.value = settings.dyslexia.boldFrequency;
   elements.dyslexiaRemoveDecorations.checked = settings.dyslexia.removeDecorations;
-  elements.dyslexiaBackground.value = settings.dyslexia.background;
   elements.dyslexiaTextColor.value = settings.dyslexia.textColor;
 
   elements.adhdEnabled.checked = settings.adhd.enabled;
   elements.adhdBreakBlocks.checked = settings.adhd.breakBlocks;
   elements.adhdBlockLength.value = settings.adhd.blockLength;
-  elements.adhdBackground.value = settings.adhd.background;
   elements.adhdTextColor.value = settings.adhd.textColor;
   elements.adhdAccentColor.value = settings.adhd.accentColor;
 
@@ -103,14 +97,12 @@ function collectSettings() {
       boldRandomWords: elements.dyslexiaBoldRandomWords.checked,
       boldFrequency: Number(elements.dyslexiaBoldFrequency.value),
       removeDecorations: elements.dyslexiaRemoveDecorations.checked,
-      background: elements.dyslexiaBackground.value,
       textColor: elements.dyslexiaTextColor.value
     },
     adhd: {
       enabled: elements.adhdEnabled.checked,
       breakBlocks: elements.adhdBreakBlocks.checked,
       blockLength: Number(elements.adhdBlockLength.value),
-      background: elements.adhdBackground.value,
       textColor: elements.adhdTextColor.value,
       accentColor: elements.adhdAccentColor.value
     }
@@ -146,7 +138,7 @@ async function notifyActiveTab(settings) {
 }
 
 function updateReadouts() {
-  elements.dyslexiaTextSizeValue.value = `${elements.dyslexiaTextSize.value}px`;
+  elements.dyslexiaTextSizeValue.value = `${Math.round((Number(elements.dyslexiaTextSize.value) / DEFAULT_SETTINGS.dyslexia.textSize) * 100)}%`;
   elements.dyslexiaLineHeightValue.value = `${Number(elements.dyslexiaLineHeight.value).toFixed(1)}x`;
   elements.dyslexiaBoldFrequencyValue.value = `${elements.dyslexiaBoldFrequency.value}%`;
   elements.adhdBlockLengthValue.value = `${elements.adhdBlockLength.value} chars`;
