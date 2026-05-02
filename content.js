@@ -1,7 +1,7 @@
 const DEFAULT_SETTINGS = {
   dyslexia: {
     enabled: false,
-    fontFamily: "OpenDyslexic, Comic Sans MS, Trebuchet MS, Verdana, Arial, sans-serif",
+    fontFamily: "OpenDyslexicRegular, OpenDyslexic, Trebuchet MS, Verdana, Arial, sans-serif",
     textSize: 17,
     lineHeight: 1.6,
     boldRandomWords: false,
@@ -91,6 +91,8 @@ function buildCss(settings) {
   const fontWeight = adhd.enabled ? 600 : 400;
 
   return `
+    @import url("https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/open-dyslexic-regular.css");
+
     html[data-accessease-active] .${TEXT_ELEMENT_CLASS} {
       color: var(--accessease-text-color) !important;
     }
@@ -715,7 +717,7 @@ function mergeSettings(base, updates) {
 
 function normalizeFontFamily(fontFamily) {
   const fontStacks = [
-    "OpenDyslexic, Comic Sans MS, Trebuchet MS, Verdana, Arial, sans-serif",
+    "OpenDyslexicRegular, OpenDyslexic, Trebuchet MS, Verdana, Arial, sans-serif",
     "Lexend, Trebuchet MS, Verdana, Arial, sans-serif",
     "Atkinson Hyperlegible, Verdana, Arial, sans-serif",
     "Georgia, Times New Roman, serif",
