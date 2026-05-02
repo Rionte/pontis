@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "AccessEase Navigator",
+  "version": "1.0.0",
+  "description": "Customizable dyslexia and ADHD reading support for web pages.",
+  "permissions": ["storage", "tabs"],
+  "host_permissions": ["<all_urls>"],
+  "action": {
+    "default_title": "AccessEase Navigator",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

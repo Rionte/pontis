@@ -1,0 +1,272 @@
+:root {
+  color-scheme: light;
+  --ink: #24303d;
+  --muted: #64717f;
+  --panel: #ffffff;
+  --line: #d9e0e7;
+  --accent: #1f7a68;
+  --accent-dark: #155f52;
+  --bg: #f4f1ea;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  width: 380px;
+  margin: 0;
+  color: var(--ink);
+  background: var(--bg);
+  font-family: Inter, Segoe UI, Arial, sans-serif;
+  font-size: 14px;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+.popup-shell {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+}
+
+.topbar,
+.section-heading,
+.switch,
+.range-field span,
+.save-state {
+  display: flex;
+  align-items: center;
+}
+
+.topbar {
+  justify-content: space-between;
+}
+
+.eyebrow {
+  margin: 0 0 2px;
+  color: var(--accent-dark);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+h1 {
+  font-size: 24px;
+  line-height: 1.1;
+}
+
+h2 {
+  font-size: 16px;
+  line-height: 1.25;
+}
+
+.section-heading p {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.mode-section {
+  padding: 14px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.section-heading {
+  justify-content: space-between;
+  gap: 12px;
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+}
+
+.section-heading::-webkit-details-marker {
+  display: none;
+}
+
+.settings-panel {
+  display: grid;
+  gap: 12px;
+  padding-top: 12px;
+}
+
+.chevron {
+  width: 26px;
+  height: 26px;
+  display: inline-grid;
+  place-items: center;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 800;
+  transition: transform 140ms ease, border-color 140ms ease;
+}
+
+.mode-section[open] .chevron {
+  transform: rotate(180deg);
+}
+
+.section-heading:hover .chevron {
+  border-color: var(--accent);
+}
+
+.icon-button {
+  width: 34px;
+  height: 34px;
+  display: inline-grid;
+  place-items: center;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.icon-button:hover {
+  border-color: var(--accent);
+}
+
+.switch {
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.switch input {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  opacity: 0;
+}
+
+.slider {
+  order: 2;
+  flex: 0 0 auto;
+  position: relative;
+  width: 42px;
+  height: 24px;
+  background: #aab4bf;
+  border-radius: 999px;
+  transition: background 140ms ease;
+}
+
+.slider::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.24);
+  transition: transform 140ms ease;
+}
+
+.switch input:checked + .slider {
+  background: var(--accent);
+}
+
+.switch input:checked + .slider::after {
+  transform: translateX(18px);
+}
+
+.switch-label {
+  order: 1;
+  color: var(--ink);
+  font-size: 13px;
+}
+
+.field,
+.range-field,
+.color-field {
+  display: grid;
+  gap: 7px;
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.field select,
+.color-field input {
+  width: 100%;
+}
+
+select {
+  height: 36px;
+  color: var(--ink);
+  background: #f8faf9;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 0 10px;
+}
+
+.range-field span {
+  justify-content: space-between;
+  gap: 12px;
+}
+
+output {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+.color-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.color-field {
+  font-size: 12px;
+}
+
+.color-field input {
+  height: 34px;
+  padding: 3px;
+  background: #f8faf9;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+}
+
+.checkbox-field {
+  grid-template-columns: 18px 1fr;
+  align-items: start;
+  color: var(--ink);
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.checkbox-field input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+}
+
+.save-state {
+  min-height: 18px;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 12px;
+}
