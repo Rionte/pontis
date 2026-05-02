@@ -8,12 +8,14 @@ const DEFAULT_SETTINGS = {
     boldFrequency: 16,
     removeDecorations: false,
     capitalizeAll: false,
+    useAutoTextColor: true,
     textColor: "#727982"
   },
   adhd: {
     enabled: false,
     breakBlocks: true,
     blockLength: 280,
+    useAutoTextColor: true,
     textColor: "#111111",
     accentColor: "#005fcc"
   }
@@ -43,6 +45,11 @@ const elements = {
 };
 
 let saveTimer;
+let currentFormSettings = mergeSettings(DEFAULT_SETTINGS, {});
+const manualColorTouched = {
+  dyslexia: false,
+  adhd: false
+};
 
 init();
 
@@ -53,16 +60,13 @@ async function init() {
 }
 
 function attachEvents() {
-  document.querySelectorAll("input, select").forEach((control) => {
-    control.addEventListener("input", saveFromForm);
-    control.addEventListener("change", saveFromForm);
-  });
-
   elements.dyslexiaTextColor.addEventListener("input", () => {
+    manualColorTouched.dyslexia = true;
     syncTextColorPickers("dyslexia");
   });
 
   elements.adhdTextColor.addEventListener("input", () => {
+    manualColorTouched.adhd = true;
     syncTextColorPickers("adhd");
   });
 
@@ -74,7 +78,14 @@ function attachEvents() {
     syncTextColorPickers("dyslexia");
   });
 
+  document.querySelectorAll("input, select").forEach((control) => {
+    control.addEventListener("input", saveFromForm);
+    control.addEventListener("change", saveFromForm);
+  });
+
   elements.resetSettings.addEventListener("click", async () => {
+    manualColorTouched.dyslexia = false;
+    manualColorTouched.adhd = false;
     renderSettings(DEFAULT_SETTINGS);
     await persistSettings(DEFAULT_SETTINGS);
     showSaveState("Settings reset.");
@@ -87,6 +98,8 @@ async function loadSettings() {
 }
 
 function renderSettings(settings) {
+  currentFormSettings = mergeSettings(DEFAULT_SETTINGS, settings);
+
   const syncedTextColor = settings.dyslexia.enabled && settings.adhd.enabled
     ? settings.dyslexia.textColor
     : settings.adhd.textColor;
@@ -114,6 +127,12 @@ function collectSettings() {
   const bothModesEnabled = elements.dyslexiaEnabled.checked && elements.adhdEnabled.checked;
   const dyslexiaTextColor = elements.dyslexiaTextColor.value;
   const adhdTextColor = bothModesEnabled ? dyslexiaTextColor : elements.adhdTextColor.value;
+  const dyslexiaUseAutoTextColor = manualColorTouched.dyslexia
+    ? false
+    : currentFormSettings.dyslexia.useAutoTextColor;
+  const adhdUseAutoTextColor = bothModesEnabled
+    ? dyslexiaUseAutoTextColor
+    : (manualColorTouched.adhd ? false : currentFormSettings.adhd.useAutoTextColor);
 
   return {
     dyslexia: {
@@ -125,12 +144,14 @@ function collectSettings() {
       boldFrequency: Number(elements.dyslexiaBoldFrequency.value),
       removeDecorations: elements.dyslexiaRemoveDecorations.checked,
       capitalizeAll: elements.dyslexiaCapitalizeAll.checked,
+      useAutoTextColor: dyslexiaUseAutoTextColor,
       textColor: dyslexiaTextColor
     },
     adhd: {
       enabled: elements.adhdEnabled.checked,
       breakBlocks: elements.adhdBreakBlocks.checked,
       blockLength: Number(elements.adhdBlockLength.value),
+      useAutoTextColor: adhdUseAutoTextColor,
       textColor: adhdTextColor,
       accentColor: elements.adhdAccentColor.value
     }
@@ -149,12 +170,15 @@ function syncTextColorPickers(source) {
 }
 
 function saveFromForm() {
+  const nextSettings = collectSettings();
+
   updateReadouts();
   clearTimeout(saveTimer);
   showSaveState("Saving...");
 
   saveTimer = setTimeout(async () => {
-    await persistSettings(collectSettings());
+    await persistSettings(nextSettings);
+    currentFormSettings = mergeSettings(DEFAULT_SETTINGS, nextSettings);
     showSaveState("Settings saved automatically.");
   }, 120);
 }
