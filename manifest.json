@@ -5,6 +5,9 @@
   "description": "Customizable dyslexia and ADHD reading support for web pages.",
   "permissions": ["storage", "tabs"],
   "host_permissions": ["<all_urls>"],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; style-src 'self' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net"
+  },
   "action": {
     "default_title": "AccessEase Navigator",
     "default_popup": "popup.html"
