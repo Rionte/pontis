@@ -58,6 +58,22 @@ function attachEvents() {
     control.addEventListener("change", saveFromForm);
   });
 
+  elements.dyslexiaTextColor.addEventListener("input", () => {
+    syncTextColorPickers("dyslexia");
+  });
+
+  elements.adhdTextColor.addEventListener("input", () => {
+    syncTextColorPickers("adhd");
+  });
+
+  elements.dyslexiaEnabled.addEventListener("change", () => {
+    syncTextColorPickers("dyslexia");
+  });
+
+  elements.adhdEnabled.addEventListener("change", () => {
+    syncTextColorPickers("dyslexia");
+  });
+
   elements.resetSettings.addEventListener("click", async () => {
     renderSettings(DEFAULT_SETTINGS);
     await persistSettings(DEFAULT_SETTINGS);
@@ -71,6 +87,10 @@ async function loadSettings() {
 }
 
 function renderSettings(settings) {
+  const syncedTextColor = settings.dyslexia.enabled && settings.adhd.enabled
+    ? settings.dyslexia.textColor
+    : settings.adhd.textColor;
+
   elements.dyslexiaEnabled.checked = settings.dyslexia.enabled;
   elements.dyslexiaFont.value = normalizeFontFamily(settings.dyslexia.fontFamily);
   elements.dyslexiaTextSize.value = settings.dyslexia.textSize;
@@ -84,13 +104,17 @@ function renderSettings(settings) {
   elements.adhdEnabled.checked = settings.adhd.enabled;
   elements.adhdBreakBlocks.checked = settings.adhd.breakBlocks;
   elements.adhdBlockLength.value = settings.adhd.blockLength;
-  elements.adhdTextColor.value = settings.adhd.textColor;
+  elements.adhdTextColor.value = syncedTextColor;
   elements.adhdAccentColor.value = settings.adhd.accentColor;
 
   updateReadouts();
 }
 
 function collectSettings() {
+  const bothModesEnabled = elements.dyslexiaEnabled.checked && elements.adhdEnabled.checked;
+  const dyslexiaTextColor = elements.dyslexiaTextColor.value;
+  const adhdTextColor = bothModesEnabled ? dyslexiaTextColor : elements.adhdTextColor.value;
+
   return {
     dyslexia: {
       enabled: elements.dyslexiaEnabled.checked,
@@ -101,16 +125,27 @@ function collectSettings() {
       boldFrequency: Number(elements.dyslexiaBoldFrequency.value),
       removeDecorations: elements.dyslexiaRemoveDecorations.checked,
       capitalizeAll: elements.dyslexiaCapitalizeAll.checked,
-      textColor: elements.dyslexiaTextColor.value
+      textColor: dyslexiaTextColor
     },
     adhd: {
       enabled: elements.adhdEnabled.checked,
       breakBlocks: elements.adhdBreakBlocks.checked,
       blockLength: Number(elements.adhdBlockLength.value),
-      textColor: elements.adhdTextColor.value,
+      textColor: adhdTextColor,
       accentColor: elements.adhdAccentColor.value
     }
   };
+}
+
+function syncTextColorPickers(source) {
+  const bothModesEnabled = elements.dyslexiaEnabled.checked && elements.adhdEnabled.checked;
+  if (!bothModesEnabled) {
+    return;
+  }
+
+  const syncedColor = source === "adhd" ? elements.adhdTextColor.value : elements.dyslexiaTextColor.value;
+  elements.dyslexiaTextColor.value = syncedColor;
+  elements.adhdTextColor.value = syncedColor;
 }
 
 function saveFromForm() {
