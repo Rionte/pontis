@@ -14,8 +14,7 @@ A Chrome extension that adds configurable reading support for dyslexia and ADHD.
 1. Open Chrome and go to `chrome://extensions`.
 2. Turn on **Developer mode**.
 3. Choose **Load unpacked**.
-4. Select this folder:
-   `C:\Users\remi\Documents\Codex\2026-05-02\code-me-a-chrome-extension-that`
+4. Select the folder.
 
 The extension popup will appear in the Chrome toolbar after loading.
 
