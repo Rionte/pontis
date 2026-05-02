@@ -7,6 +7,7 @@ const DEFAULT_SETTINGS = {
     boldRandomWords: false,
     boldFrequency: 16,
     removeDecorations: false,
+    capitalizeAll: false,
     textColor: "#5f6670"
   },
   adhd: {
@@ -29,6 +30,7 @@ const elements = {
   dyslexiaBoldFrequency: document.querySelector("#dyslexiaBoldFrequency"),
   dyslexiaBoldFrequencyValue: document.querySelector("#dyslexiaBoldFrequencyValue"),
   dyslexiaRemoveDecorations: document.querySelector("#dyslexiaRemoveDecorations"),
+  dyslexiaCapitalizeAll: document.querySelector("#dyslexiaCapitalizeAll"),
   dyslexiaTextColor: document.querySelector("#dyslexiaTextColor"),
   adhdEnabled: document.querySelector("#adhdEnabled"),
   adhdBreakBlocks: document.querySelector("#adhdBreakBlocks"),
@@ -76,6 +78,7 @@ function renderSettings(settings) {
   elements.dyslexiaBoldRandomWords.checked = settings.dyslexia.boldRandomWords;
   elements.dyslexiaBoldFrequency.value = settings.dyslexia.boldFrequency;
   elements.dyslexiaRemoveDecorations.checked = settings.dyslexia.removeDecorations;
+  elements.dyslexiaCapitalizeAll.checked = settings.dyslexia.capitalizeAll;
   elements.dyslexiaTextColor.value = settings.dyslexia.textColor;
 
   elements.adhdEnabled.checked = settings.adhd.enabled;
@@ -97,6 +100,7 @@ function collectSettings() {
       boldRandomWords: elements.dyslexiaBoldRandomWords.checked,
       boldFrequency: Number(elements.dyslexiaBoldFrequency.value),
       removeDecorations: elements.dyslexiaRemoveDecorations.checked,
+      capitalizeAll: elements.dyslexiaCapitalizeAll.checked,
       textColor: elements.dyslexiaTextColor.value
     },
     adhd: {
