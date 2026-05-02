@@ -1,7 +1,7 @@
 const DEFAULT_SETTINGS = {
   dyslexia: {
     enabled: false,
-    fontFamily: "OpenDyslexic, Lexend, Atkinson Hyperlegible, Verdana, Arial, sans-serif",
+    fontFamily: "OpenDyslexic, Comic Sans MS, Trebuchet MS, Verdana, Arial, sans-serif",
     textSize: 17,
     lineHeight: 1.6,
     boldRandomWords: false,
@@ -74,7 +74,7 @@ async function loadSettings() {
 
 function renderSettings(settings) {
   elements.dyslexiaEnabled.checked = settings.dyslexia.enabled;
-  elements.dyslexiaFont.value = settings.dyslexia.fontFamily;
+  elements.dyslexiaFont.value = normalizeFontFamily(settings.dyslexia.fontFamily);
   elements.dyslexiaTextSize.value = settings.dyslexia.textSize;
   elements.dyslexiaLineHeight.value = settings.dyslexia.lineHeight;
   elements.dyslexiaBoldRandomWords.checked = settings.dyslexia.boldRandomWords;
@@ -154,6 +154,16 @@ function updateReadouts() {
 
 function showSaveState(message) {
   elements.saveState.textContent = message;
+}
+
+function normalizeFontFamily(fontFamily) {
+  const availableValues = [...elements.dyslexiaFont.options].map((option) => option.value);
+  if (availableValues.includes(fontFamily)) {
+    return fontFamily;
+  }
+
+  const matchingOption = availableValues.find((value) => value.split(",")[0] === fontFamily.split(",")[0]);
+  return matchingOption || DEFAULT_SETTINGS.dyslexia.fontFamily;
 }
 
 function mergeSettings(base, updates) {

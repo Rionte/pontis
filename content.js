@@ -1,7 +1,7 @@
 const DEFAULT_SETTINGS = {
   dyslexia: {
     enabled: false,
-    fontFamily: "OpenDyslexic, Lexend, Atkinson Hyperlegible, Verdana, Arial, sans-serif",
+    fontFamily: "OpenDyslexic, Comic Sans MS, Trebuchet MS, Verdana, Arial, sans-serif",
     textSize: 17,
     lineHeight: 1.6,
     boldRandomWords: false,
@@ -483,59 +483,108 @@ function findEdgeTextNode(root, edge) {
 }
 
 function chunkTextRanges(text, maxLength) {
-  const firstTextIndex = text.search(/\S/);
-  if (firstTextIndex === -1) {
+  const sentences = getSentenceRanges(text);
+  if (!sentences.length) {
     return [];
   }
 
-  const end = text.trimEnd().length;
   const chunks = [];
-  let start = firstTextIndex;
+  let current = null;
 
-  while (start < end) {
-    let next = Math.min(start + maxLength, end);
-
-    if (next < end) {
-      next = chooseBreakPoint(text, start, next, maxLength);
+  sentences.forEach((sentence) => {
+    if (!current) {
+      current = { start: sentence.start, end: sentence.end };
+      return;
     }
 
-    const trimmedStart = findNextNonSpace(text, start, next);
-    const trimmedEnd = findPreviousNonSpace(text, trimmedStart, next);
+    const combinedLength = sentence.end - current.start;
+    const currentLength = current.end - current.start;
 
-    if (trimmedStart < trimmedEnd) {
-      chunks.push({ start: trimmedStart, end: trimmedEnd });
+    if (currentLength >= Math.floor(maxLength * 0.55) && combinedLength > maxLength) {
+      chunks.push(current);
+      current = { start: sentence.start, end: sentence.end };
+      return;
     }
 
-    start = findNextNonSpace(text, next, end);
+    current.end = sentence.end;
+  });
+
+  if (current) {
+    chunks.push(current);
   }
 
   return chunks;
 }
 
-function chooseBreakPoint(text, start, target, maxLength) {
-  const slice = text.slice(start, target);
-  const minimum = Math.floor(maxLength * 0.45);
-  const sentenceBreaks = [". ", "! ", "? ", ".\n", "!\n", "?\n"];
-  let bestSentenceBreak = -1;
+function getSentenceRanges(text) {
+  const ranges = [];
+  let start = findNextNonSpace(text, 0, text.length);
+  let index = start;
 
-  sentenceBreaks.forEach((marker) => {
-    const index = slice.lastIndexOf(marker);
-    if (index >= minimum) {
-      bestSentenceBreak = Math.max(bestSentenceBreak, index + 1);
+  while (index < text.length) {
+    if (isSentenceEnd(text, index)) {
+      const end = consumeSentenceEnding(text, index + 1);
+      const trimmedEnd = findPreviousNonSpace(text, start, end);
+
+      if (start < trimmedEnd) {
+        ranges.push({ start, end: trimmedEnd });
+      }
+
+      start = findNextNonSpace(text, end, text.length);
+      index = start;
+      continue;
     }
-  });
 
-  if (bestSentenceBreak !== -1) {
-    return start + bestSentenceBreak;
+    index += 1;
   }
 
-  for (let index = slice.length - 1; index >= minimum; index -= 1) {
-    if (/\s/.test(slice[index])) {
-      return start + index;
-    }
+  const finalEnd = findPreviousNonSpace(text, start, text.length);
+  if (start < finalEnd) {
+    ranges.push({ start, end: finalEnd });
   }
 
-  return target;
+  return ranges;
+}
+
+function isSentenceEnd(text, index) {
+  const char = text[index];
+  if (!/[.!?]/.test(char)) {
+    return false;
+  }
+
+  if (char === "." && isLikelyAbbreviation(text, index)) {
+    return false;
+  }
+
+  const nextIndex = consumeSentenceEnding(text, index + 1);
+  return nextIndex >= text.length || /\s/.test(text[nextIndex]);
+}
+
+function consumeSentenceEnding(text, index) {
+  let next = index;
+
+  while (next < text.length) {
+    const char = text[next];
+
+    if (/["')\]]/.test(char)) {
+      next += 1;
+      continue;
+    }
+
+    if (char === "[" && /^\[\d+\]/.test(text.slice(next))) {
+      next += text.slice(next).match(/^\[\d+\]/)[0].length;
+      continue;
+    }
+
+    break;
+  }
+
+  return next;
+}
+
+function isLikelyAbbreviation(text, index) {
+  const before = text.slice(Math.max(0, index - 12), index + 1);
+  return /\b(?:Mr|Mrs|Ms|Dr|Prof|Sr|Jr|St|vs|etc|e\.g|i\.e)\.$/i.test(before) || /\b[A-Z]\.$/.test(before);
 }
 
 function findNextNonSpace(text, start, end) {
@@ -555,8 +604,28 @@ function findPreviousNonSpace(text, start, end) {
 }
 
 function mergeSettings(base, updates) {
-  return {
+  const merged = {
     dyslexia: { ...base.dyslexia, ...(updates.dyslexia || {}) },
     adhd: { ...base.adhd, ...(updates.adhd || {}) }
   };
+
+  merged.dyslexia.fontFamily = normalizeFontFamily(merged.dyslexia.fontFamily);
+  return merged;
+}
+
+function normalizeFontFamily(fontFamily) {
+  const fontStacks = [
+    "OpenDyslexic, Comic Sans MS, Trebuchet MS, Verdana, Arial, sans-serif",
+    "Lexend, Trebuchet MS, Verdana, Arial, sans-serif",
+    "Atkinson Hyperlegible, Verdana, Arial, sans-serif",
+    "Georgia, Times New Roman, serif",
+    "Verdana, Arial, sans-serif"
+  ];
+
+  if (fontStacks.includes(fontFamily)) {
+    return fontFamily;
+  }
+
+  const firstFamily = fontFamily.split(",")[0];
+  return fontStacks.find((stack) => stack.split(",")[0] === firstFamily) || DEFAULT_SETTINGS.dyslexia.fontFamily;
 }
