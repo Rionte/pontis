@@ -3,7 +3,7 @@ const DEFAULT_SETTINGS = {
   dyslexia: {
     enabled: false,
     fontFamily: "OpenDyslexicRegular, OpenDyslexic, Trebuchet MS, Verdana, Arial, sans-serif",
-    textSize: 17,
+    textSize: 100,
     lineHeight: 1.6,
     boldRandomWords: false,
     boldFrequency: 16,
@@ -226,7 +226,7 @@ async function notifyActiveTab(settings) {
 
 // Update the little helper text next to sliders/inputs (like "120%", "1.6x")
 function updateReadouts() {
-  elements.dyslexiaTextSizeValue.value = `${Math.round((Number(elements.dyslexiaTextSize.value) / DEFAULT_SETTINGS.dyslexia.textSize) * 100)}%`;
+  elements.dyslexiaTextSizeValue.value = `${elements.dyslexiaTextSize.value}%`;
   elements.dyslexiaLineHeightValue.value = `${Number(elements.dyslexiaLineHeight.value).toFixed(1)}x`;
   elements.dyslexiaBoldFrequencyValue.value = `${elements.dyslexiaBoldFrequency.value}%`;
   elements.adhdBlockLengthValue.value = `${elements.adhdBlockLength.value} chars`;
@@ -256,10 +256,10 @@ function mergeSettings(base, updates) {
     adhd: { ...base.adhd, ...(updates.adhd || {}) }
   };
 
-  // Special case (no pun intended), if user explicitly sets textSize back to default (17), treat it as "use default"
-  if ((updates.dyslexia || {}).textSize === 17) {
-    merged.dyslexia.textSize = base.dyslexia.textSize;
+  if (merged.dyslexia.textSize < 50) {
+    merged.dyslexia.textSize = Math.round((merged.dyslexia.textSize / 17) * 100);
   }
+  merged.dyslexia.textSize = Math.max(80, Math.min(140, merged.dyslexia.textSize));
 
   return merged;
 }

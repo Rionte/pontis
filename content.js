@@ -3,7 +3,7 @@ const DEFAULT_SETTINGS = {
   dyslexia: {
     enabled: false,
     fontFamily: "OpenDyslexicRegular, OpenDyslexic, Trebuchet MS, Verdana, Arial, sans-serif",
-    textSize: 17,
+    textSize: 100,
     lineHeight: 1.6,
     boldRandomWords: false,
     boldFrequency: 16,
@@ -246,22 +246,27 @@ function removeInjectedStyle() {
 // Apply text color and font-size adjustments to visible text elements on the page
 function applyTextElementStyles(settings) {
   const textElements = getTextElements();
-  // Scale font size relative to the original, but only if dyslexia mode is on
-  const fontScale = settings.dyslexia.enabled ? settings.dyslexia.textSize / 17 : 1;
-
-  textElements.forEach((element) => {
+  // Scale each text element relative to its own original size.
+  const fontScale = settings.dyslexia.enabled ? settings.dyslexia.textSize / 100 : 1;
+  const textElementRecords = [...textElements].map((element) => {
     const computedStyle = getComputedStyle(element);
     const background = getEffectiveBackgroundColor(element);
-    // Choose a text color that contrasts well with the background
-    const textColor = getReadableTextColor(background, settings);
+
+    return {
+      element,
+      originalFontSize: parseFloat(computedStyle.fontSize) || 16,
+      textColor: getReadableTextColor(background, settings)
+    };
+  });
+
+  textElementRecords.forEach(({ element, originalFontSize, textColor }) => {
 
     element.classList.add(TEXT_ELEMENT_CLASS);
     element.setAttribute(TEXT_ELEMENT_ATTR, "true");
     element.style.setProperty("--accessease-text-color", textColor);
 
     if (settings.dyslexia.enabled) {
-      const originalFontSize = parseFloat(computedStyle.fontSize) || 16;
-      // Clamp scaled font size to a readable range (12–42px)
+      // Clamp scaled font size to a readable range while preserving hierarchy.
       const scaledFontSize = Math.max(12, Math.min(42, originalFontSize * fontScale));
       element.style.setProperty("--accessease-font-size", `${scaledFontSize.toFixed(2)}px`);
     } else {
@@ -807,10 +812,10 @@ function mergeSettings(base, updates) {
   };
 
   merged.dyslexia.fontFamily = normalizeFontFamily(merged.dyslexia.fontFamily);
-  // Preserve the default font size if the user explicitly sets it back to 17
-  if ((updates.dyslexia || {}).textSize === 17) {
-    merged.dyslexia.textSize = base.dyslexia.textSize;
+  if (merged.dyslexia.textSize < 50) {
+    merged.dyslexia.textSize = Math.round((merged.dyslexia.textSize / 17) * 100);
   }
+  merged.dyslexia.textSize = Math.max(80, Math.min(140, merged.dyslexia.textSize));
   return merged;
 }
 
