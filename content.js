@@ -7,6 +7,7 @@ const DEFAULT_SETTINGS = {
     boldRandomWords: false,
     boldFrequency: 16,
     removeDecorations: false,
+    capitalizeAll: false,
     textColor: "#5f6670"
   },
   adhd: {
@@ -114,6 +115,8 @@ function buildCss(settings) {
 }
 
 function buildDyslexiaCss(dyslexia) {
+  const textTransform = dyslexia.capitalizeAll ? "uppercase" : "none";
+
   return `
     html[data-accessease-active] .${TEXT_ELEMENT_CLASS} {
       font-family: ${dyslexia.fontFamily} !important;
@@ -121,12 +124,14 @@ function buildDyslexiaCss(dyslexia) {
       line-height: ${dyslexia.lineHeight} !important;
       letter-spacing: 0.01em !important;
       text-align: left !important;
+      text-transform: ${textTransform} !important;
     }
 
     html[data-accessease-active] body *::before,
     html[data-accessease-active] body *::after {
       font-family: ${dyslexia.fontFamily} !important;
       line-height: ${dyslexia.lineHeight} !important;
+      text-transform: ${textTransform} !important;
     }
 
     html[data-accessease-active] .${BOLD_WORD_CLASS} {
