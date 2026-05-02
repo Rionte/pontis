@@ -7,20 +7,20 @@ const DEFAULT_SETTINGS = {
     boldRandomWords: false,
     boldFrequency: 16,
     removeDecorations: false,
-    background: "#f7f1df",
     textColor: "#5f6670"
   },
   adhd: {
     enabled: false,
     breakBlocks: true,
     blockLength: 280,
-    background: "#ffffff",
     textColor: "#111111",
     accentColor: "#005fcc"
   }
 };
 
 const STYLE_ID = "accessease-style";
+const TEXT_ELEMENT_CLASS = "accessease-text-element";
+const TEXT_ELEMENT_ATTR = "data-accessease-text-element";
 const BLOCK_CLASS = "accessease-split-block";
 const SPLIT_WRAPPER_CLASS = "accessease-split-wrapper";
 const BOLD_WORD_CLASS = "accessease-bold-word";
@@ -59,6 +59,7 @@ async function loadSettings() {
 }
 
 function applySettings(settings) {
+  restoreTextElementStyles();
   restoreBoldWords();
   restoreSplitParagraphs();
 
@@ -78,51 +79,24 @@ function applySettings(settings) {
   if (settings.dyslexia.enabled && settings.dyslexia.boldRandomWords) {
     boldRandomWords(settings.dyslexia.boldFrequency);
   }
+
+  applyTextElementStyles(settings);
 }
 
 function buildCss(settings) {
   const dyslexia = settings.dyslexia;
   const adhd = settings.adhd;
-  const pageBackground = adhd.enabled ? adhd.background : dyslexia.background;
-  const pageText = adhd.enabled ? adhd.textColor : dyslexia.textColor;
   const accentColor = adhd.enabled ? adhd.accentColor : "#2f6f65";
   const fontWeight = adhd.enabled ? 600 : 400;
 
   return `
-    html[data-accessease-active],
-    html[data-accessease-active] body {
-      background: ${pageBackground} !important;
-      color: ${pageText} !important;
-    }
-
-    html[data-accessease-active] body *:not(script):not(style):not(noscript):not(svg):not(svg *):not(canvas):not(img):not(video):not(path) {
-      color: ${pageText} !important;
-    }
-
-    html[data-accessease-active] p,
-    html[data-accessease-active] li,
-    html[data-accessease-active] blockquote,
-    html[data-accessease-active] dd,
-    html[data-accessease-active] div,
-    html[data-accessease-active] nav,
-    html[data-accessease-active] header,
-    html[data-accessease-active] footer,
-    html[data-accessease-active] aside,
-    html[data-accessease-active] form,
-    html[data-accessease-active] main,
-    html[data-accessease-active] article,
-    html[data-accessease-active] section,
-    html[data-accessease-active] table,
-    html[data-accessease-active] td,
-    html[data-accessease-active] th {
-      background-color: ${pageBackground} !important;
-      color: ${pageText} !important;
+    html[data-accessease-active] .${TEXT_ELEMENT_CLASS} {
+      color: var(--accessease-text-color) !important;
     }
 
     html[data-accessease-active] a,
     html[data-accessease-active] button,
     html[data-accessease-active] [role="button"] {
-      color: ${accentColor} !important;
       text-decoration-thickness: 0.12em !important;
       text-underline-offset: 0.18em !important;
     }
@@ -130,35 +104,20 @@ function buildCss(settings) {
     html[data-accessease-active] input,
     html[data-accessease-active] textarea,
     html[data-accessease-active] select {
-      background: ${pageBackground} !important;
-      color: ${pageText} !important;
+      color: var(--accessease-text-color) !important;
       border-color: ${accentColor} !important;
     }
 
-    html[data-accessease-active] ::selection {
-      background: ${accentColor} !important;
-      color: ${pageBackground} !important;
-    }
-
     ${dyslexia.enabled ? buildDyslexiaCss(dyslexia) : ""}
-    ${adhd.enabled ? buildAdhdCss(pageBackground, pageText, accentColor, fontWeight) : ""}
+    ${adhd.enabled ? buildAdhdCss(accentColor, fontWeight) : ""}
   `;
 }
 
 function buildDyslexiaCss(dyslexia) {
-  const fontSizePercent = (dyslexia.textSize / 16) * 100;
-  
   return `
-    html[data-accessease-active] body {
+    html[data-accessease-active] .${TEXT_ELEMENT_CLASS} {
       font-family: ${dyslexia.fontFamily} !important;
-      font-size: ${fontSizePercent}% !important;
-      line-height: ${dyslexia.lineHeight} !important;
-      letter-spacing: 0.01em !important;
-      text-align: left !important;
-    }
-
-    html[data-accessease-active] body *:not(script):not(style):not(noscript):not(svg):not(svg *):not(canvas):not(img):not(video):not(path) {
-      font-family: ${dyslexia.fontFamily} !important;
+      font-size: var(--accessease-font-size) !important;
       line-height: ${dyslexia.lineHeight} !important;
       letter-spacing: 0.01em !important;
       text-align: left !important;
@@ -168,7 +127,6 @@ function buildDyslexiaCss(dyslexia) {
     html[data-accessease-active] body *::after {
       font-family: ${dyslexia.fontFamily} !important;
       line-height: ${dyslexia.lineHeight} !important;
-      color: ${dyslexia.textColor} !important;
     }
 
     html[data-accessease-active] .${BOLD_WORD_CLASS} {
@@ -189,7 +147,7 @@ function buildDecorationResetCss() {
   `;
 }
 
-function buildAdhdCss(pageBackground, pageText, accentColor, fontWeight) {
+function buildAdhdCss(accentColor, fontWeight) {
   return `
     html[data-accessease-active] p,
     html[data-accessease-active] li,
@@ -199,8 +157,6 @@ function buildAdhdCss(pageBackground, pageText, accentColor, fontWeight) {
       display: block !important;
       margin-top: 0.75em !important;
       margin-bottom: 0.75em !important;
-      background: ${pageBackground} !important;
-      color: ${pageText} !important;
       font-weight: ${fontWeight} !important;
     }
 
@@ -215,8 +171,6 @@ function buildAdhdCss(pageBackground, pageText, accentColor, fontWeight) {
       margin-top: 0.75em !important;
       margin-bottom: 0.75em !important;
       padding: 0.55em 0.75em !important;
-      background: ${pageBackground} !important;
-      color: ${pageText} !important;
       border-left: 0.25em solid ${accentColor} !important;
       font-weight: ${fontWeight} !important;
     }
@@ -227,7 +181,6 @@ function buildAdhdCss(pageBackground, pageText, accentColor, fontWeight) {
     html[data-accessease-active] h4,
     html[data-accessease-active] h5,
     html[data-accessease-active] h6 {
-      color: ${pageText} !important;
       border-bottom: 0.08em solid ${accentColor} !important;
       padding-bottom: 0.12em !important;
     }
@@ -252,6 +205,141 @@ function injectStyle(css) {
 
 function removeInjectedStyle() {
   document.getElementById(STYLE_ID)?.remove();
+}
+
+function applyTextElementStyles(settings) {
+  const textElements = getTextElements();
+  const fontScale = settings.dyslexia.enabled ? settings.dyslexia.textSize / 17 : 1;
+
+  textElements.forEach((element) => {
+    const computedStyle = getComputedStyle(element);
+    const background = getEffectiveBackgroundColor(element);
+    const textColor = getReadableTextColor(background, settings);
+
+    element.classList.add(TEXT_ELEMENT_CLASS);
+    element.setAttribute(TEXT_ELEMENT_ATTR, "true");
+    element.style.setProperty("--accessease-text-color", textColor);
+
+    if (settings.dyslexia.enabled) {
+      const originalFontSize = parseFloat(computedStyle.fontSize) || 16;
+      const scaledFontSize = Math.max(12, Math.min(42, originalFontSize * fontScale));
+      element.style.setProperty("--accessease-font-size", `${scaledFontSize.toFixed(2)}px`);
+    } else {
+      element.style.removeProperty("--accessease-font-size");
+    }
+  });
+}
+
+function getTextElements() {
+  const elements = new Set();
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+    acceptNode(node) {
+      if (!node.textContent.trim() || shouldSkipTextNode(node)) {
+        return NodeFilter.FILTER_REJECT;
+      }
+      return NodeFilter.FILTER_ACCEPT;
+    }
+  });
+
+  while (walker.nextNode()) {
+    const parent = walker.currentNode.parentElement;
+    if (parent && isVisibleTextElement(parent)) {
+      elements.add(parent);
+    }
+  }
+
+  document.querySelectorAll("input, textarea, select, button, [role='button']").forEach((element) => {
+    if (element instanceof HTMLElement && isVisibleTextElement(element)) {
+      elements.add(element);
+    }
+  });
+
+  return elements;
+}
+
+function isVisibleTextElement(element) {
+  const style = getComputedStyle(element);
+  return style.display !== "none" && style.visibility !== "hidden" && style.visibility !== "collapse" && Number(style.opacity) !== 0;
+}
+
+function getEffectiveBackgroundColor(element) {
+  let current = element;
+
+  while (current && current !== document.documentElement) {
+    const style = getComputedStyle(current);
+    const color = parseCssColor(style.backgroundColor);
+
+    if (color && color.alpha > 0) {
+      return color;
+    }
+
+    current = current.parentElement;
+  }
+
+  const bodyColor = parseCssColor(getComputedStyle(document.body).backgroundColor);
+  if (bodyColor && bodyColor.alpha > 0) {
+    return bodyColor;
+  }
+
+  return { red: 255, green: 255, blue: 255, alpha: 1 };
+}
+
+function getReadableTextColor(background, settings) {
+  const lightness = getRelativeLuminance(background);
+
+  if (settings.adhd.enabled) {
+    return lightness > 0.45 ? "#000000" : "#ffffff";
+  }
+
+  return lightness > 0.45 ? settings.dyslexia.textColor : "#d8dde3";
+}
+
+function parseCssColor(color) {
+  if (!color || color === "transparent") {
+    return null;
+  }
+
+  const rgbaMatch = color.match(/^rgba?\(([^)]+)\)$/);
+  if (!rgbaMatch) {
+    return null;
+  }
+
+  const parts = rgbaMatch[1].split(",").map((part) => part.trim());
+  if (parts.length < 3) {
+    return null;
+  }
+
+  const red = Number(parts[0]);
+  const green = Number(parts[1]);
+  const blue = Number(parts[2]);
+  const alpha = parts.length >= 4 ? Number(parts[3]) : 1;
+
+  if ([red, green, blue, alpha].some((value) => Number.isNaN(value))) {
+    return null;
+  }
+
+  return { red, green, blue, alpha };
+}
+
+function getRelativeLuminance(color) {
+  const red = normalizeColorChannel(color.red);
+  const green = normalizeColorChannel(color.green);
+  const blue = normalizeColorChannel(color.blue);
+  return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+}
+
+function normalizeColorChannel(value) {
+  const channel = value / 255;
+  return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
+}
+
+function restoreTextElementStyles() {
+  document.querySelectorAll(`[${TEXT_ELEMENT_ATTR}="true"]`).forEach((element) => {
+    element.classList.remove(TEXT_ELEMENT_CLASS);
+    element.removeAttribute(TEXT_ELEMENT_ATTR);
+    element.style.removeProperty("--accessease-text-color");
+    element.style.removeProperty("--accessease-font-size");
+  });
 }
 
 function splitLongTextBlocks(maxLength) {
