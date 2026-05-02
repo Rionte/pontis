@@ -92,3 +92,73 @@ function renderSettings(settings) {
 
   updateReadouts();
 }
+
+function collectSettings() {
+  return {
+    dyslexia: {
+      enabled: elements.dyslexiaEnabled.checked,
+      fontFamily: elements.dyslexiaFont.value,
+      textSize: Number(elements.dyslexiaTextSize.value),
+      lineHeight: Number(elements.dyslexiaLineHeight.value),
+      boldRandomWords: elements.dyslexiaBoldRandomWords.checked,
+      boldFrequency: Number(elements.dyslexiaBoldFrequency.value),
+      removeDecorations: elements.dyslexiaRemoveDecorations.checked,
+      background: elements.dyslexiaBackground.value,
+      textColor: elements.dyslexiaTextColor.value
+    },
+    adhd: {
+      enabled: elements.adhdEnabled.checked,
+      breakBlocks: elements.adhdBreakBlocks.checked,
+      blockLength: Number(elements.adhdBlockLength.value),
+      background: elements.adhdBackground.value,
+      textColor: elements.adhdTextColor.value,
+      accentColor: elements.adhdAccentColor.value
+    }
+  };
+}
+
+function saveFromForm() {
+  updateReadouts();
+  clearTimeout(saveTimer);
+  showSaveState("Saving...");
+
+  saveTimer = setTimeout(async () => {
+    await persistSettings(collectSettings());
+    showSaveState("Settings saved automatically.");
+  }, 120);
+}
+
+async function persistSettings(settings) {
+  const merged = mergeSettings(DEFAULT_SETTINGS, settings);
+  await chrome.storage.sync.set({ settings: merged });
+  await notifyActiveTab(merged);
+}
+
+async function notifyActiveTab(settings) {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (!tab?.id || !tab.url || !/^https?:\/\//.test(tab.url)) {
+    return;
+  }
+
+  chrome.tabs.sendMessage(tab.id, { type: "ACCESS_EASE_SETTINGS_UPDATED", settings }).catch(() => {
+    // Some Chrome pages and newly opened tabs cannot receive content-script messages.
+  });
+}
+
+function updateReadouts() {
+  elements.dyslexiaTextSizeValue.value = `${elements.dyslexiaTextSize.value}px`;
+  elements.dyslexiaLineHeightValue.value = `${Number(elements.dyslexiaLineHeight.value).toFixed(1)}x`;
+  elements.dyslexiaBoldFrequencyValue.value = `${elements.dyslexiaBoldFrequency.value}%`;
+  elements.adhdBlockLengthValue.value = `${elements.adhdBlockLength.value} chars`;
+}
+
+function showSaveState(message) {
+  elements.saveState.textContent = message;
+}
+
+function mergeSettings(base, updates) {
+  return {
+    dyslexia: { ...base.dyslexia, ...(updates.dyslexia || {}) },
+    adhd: { ...base.adhd, ...(updates.adhd || {}) }
+  };
+}
