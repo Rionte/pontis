@@ -146,11 +146,19 @@ function buildCss(settings) {
 }
 
 function buildDyslexiaCss(dyslexia) {
+  const fontSizePercent = (dyslexia.textSize / 16) * 100;
+  
   return `
-    html[data-accessease-active] body,
+    html[data-accessease-active] body {
+      font-family: ${dyslexia.fontFamily} !important;
+      font-size: ${fontSizePercent}% !important;
+      line-height: ${dyslexia.lineHeight} !important;
+      letter-spacing: 0.01em !important;
+      text-align: left !important;
+    }
+
     html[data-accessease-active] body *:not(script):not(style):not(noscript):not(svg):not(svg *):not(canvas):not(img):not(video):not(path) {
       font-family: ${dyslexia.fontFamily} !important;
-      font-size: ${dyslexia.textSize}px !important;
       line-height: ${dyslexia.lineHeight} !important;
       letter-spacing: 0.01em !important;
       text-align: left !important;
@@ -159,7 +167,6 @@ function buildDyslexiaCss(dyslexia) {
     html[data-accessease-active] body *::before,
     html[data-accessease-active] body *::after {
       font-family: ${dyslexia.fontFamily} !important;
-      font-size: ${dyslexia.textSize}px !important;
       line-height: ${dyslexia.lineHeight} !important;
       color: ${dyslexia.textColor} !important;
     }
