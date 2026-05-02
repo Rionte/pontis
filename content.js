@@ -1,23 +1,15 @@
 const DEFAULT_SETTINGS = {
   dyslexia: {
     enabled: false,
-<<<<<<< HEAD
-    fontFamily: "OpenDyslexic, Comic Sans MS, Trebuchet MS, Verdana, Arial, sans-serif",
-    textSize: 18,
-=======
     fontFamily: "OpenDyslexicRegular, OpenDyslexic, Trebuchet MS, Verdana, Arial, sans-serif",
     textSize: 17,
->>>>>>> bf0e028101d6b24bebc0d575116d71fa11c10097
     lineHeight: 1.6,
     boldRandomWords: false,
     boldFrequency: 16,
     removeDecorations: false,
-<<<<<<< HEAD
-    textColor: "#727982"
-=======
+    textColor: "#727982",
     capitalizeAll: false,
     textColor: "#5f6670"
->>>>>>> bf0e028101d6b24bebc0d575116d71fa11c10097
   },
   adhd: {
     enabled: false,
