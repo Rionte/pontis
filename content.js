@@ -7,9 +7,8 @@ const DEFAULT_SETTINGS = {
     boldRandomWords: false,
     boldFrequency: 16,
     removeDecorations: false,
-    textColor: "#727982",
     capitalizeAll: false,
-    textColor: "#5f6670"
+    textColor: "#727982"
   },
   adhd: {
     enabled: false,
@@ -293,13 +292,25 @@ function getEffectiveBackgroundColor(element) {
 }
 
 function getReadableTextColor(background, settings) {
-  const lightness = getRelativeLuminance(background);
-
-  if (settings.adhd.enabled) {
-    return lightness > 0.45 ? "#000000" : "#ffffff";
+  const effectiveColor = getEffectiveTextColor(settings);
+  if (effectiveColor) {
+    return effectiveColor;
   }
 
-  return lightness > 0.45 ? settings.dyslexia.textColor : "#aeb8c4";
+  const lightness = getRelativeLuminance(background);
+  return lightness > 0.45 ? "#111111" : "#f0f4fa";
+}
+
+function getEffectiveTextColor(settings) {
+  if (settings.dyslexia.enabled && settings.adhd.enabled) {
+    return settings.dyslexia.textColor;
+  }
+
+  if (settings.adhd.enabled) {
+    return settings.adhd.textColor;
+  }
+
+  return settings.dyslexia.textColor;
 }
 
 function parseCssColor(color) {
