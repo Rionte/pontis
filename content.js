@@ -2,12 +2,12 @@ const DEFAULT_SETTINGS = {
   dyslexia: {
     enabled: false,
     fontFamily: "OpenDyslexic, Comic Sans MS, Trebuchet MS, Verdana, Arial, sans-serif",
-    textSize: 17,
+    textSize: 18,
     lineHeight: 1.6,
     boldRandomWords: false,
     boldFrequency: 16,
     removeDecorations: false,
-    textColor: "#5f6670"
+    textColor: "#727982"
   },
   adhd: {
     enabled: false,
@@ -291,7 +291,7 @@ function getReadableTextColor(background, settings) {
     return lightness > 0.45 ? "#000000" : "#ffffff";
   }
 
-  return lightness > 0.45 ? settings.dyslexia.textColor : "#d8dde3";
+  return lightness > 0.45 ? settings.dyslexia.textColor : "#aeb8c4";
 }
 
 function parseCssColor(color) {
@@ -705,6 +705,9 @@ function mergeSettings(base, updates) {
   };
 
   merged.dyslexia.fontFamily = normalizeFontFamily(merged.dyslexia.fontFamily);
+  if ((updates.dyslexia || {}).textSize === 17) {
+    merged.dyslexia.textSize = base.dyslexia.textSize;
+  }
   return merged;
 }
 

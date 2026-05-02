@@ -1,4 +1,4 @@
-# AccessEase Navigator
+# Pontis
 
 A Chrome extension that adds configurable reading support for dyslexia and ADHD.
 

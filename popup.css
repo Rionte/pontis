@@ -2,8 +2,9 @@
   color-scheme: light;
   --ink: #24303d;
   --muted: #64717f;
-  --panel: #ffffff;
-  --line: #d9e0e7;
+  --panel: #e6e7e4;
+  --control: #eff0ed;
+  --line: #c7cbc9;
   --accent: #1f7a68;
   --accent-dark: #155f52;
   --bg: #f4f1ea;
@@ -19,7 +20,7 @@ body {
   color: var(--ink);
   background: var(--bg);
   font-family: Inter, Segoe UI, Arial, sans-serif;
-  font-size: 14px;
+  font-size: 15px;
 }
 
 button,
@@ -30,8 +31,8 @@ select {
 
 .popup-shell {
   display: grid;
-  gap: 12px;
-  padding: 16px;
+  gap: 16px;
+  padding: 18px;
 }
 
 .topbar,
@@ -63,24 +64,24 @@ p {
 }
 
 h1 {
-  font-size: 24px;
+  font-size: 26px;
   line-height: 1.1;
 }
 
 h2 {
-  font-size: 16px;
+  font-size: 17px;
   line-height: 1.25;
 }
 
 .section-heading p {
-  margin-top: 3px;
+  margin-top: 5px;
   color: var(--muted);
-  font-size: 12px;
-  line-height: 1.35;
+  font-size: 13px;
+  line-height: 1.45;
 }
 
 .mode-section {
-  padding: 14px;
+  padding: 16px;
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -88,7 +89,7 @@ h2 {
 
 .section-heading {
   justify-content: space-between;
-  gap: 12px;
+  gap: 14px;
   list-style: none;
   cursor: pointer;
   user-select: none;
@@ -100,8 +101,8 @@ h2 {
 
 .settings-panel {
   display: grid;
-  gap: 12px;
-  padding-top: 12px;
+  gap: 18px;
+  padding-top: 18px;
 }
 
 .chevron {
@@ -131,7 +132,7 @@ h2 {
   display: inline-grid;
   place-items: center;
   color: var(--ink);
-  background: #fff;
+  background: var(--control);
   border: 1px solid var(--line);
   border-radius: 8px;
   cursor: pointer;
@@ -143,9 +144,9 @@ h2 {
 
 .switch {
   justify-content: space-between;
-  gap: 12px;
+  gap: 16px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
 }
 
@@ -191,14 +192,14 @@ h2 {
 .switch-label {
   order: 1;
   color: var(--ink);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .field,
 .range-field,
 .color-field {
   display: grid;
-  gap: 7px;
+  gap: 10px;
   color: var(--ink);
   font-weight: 700;
 }
@@ -209,9 +210,9 @@ h2 {
 }
 
 select {
-  height: 36px;
+  height: 40px;
   color: var(--ink);
-  background: #f8faf9;
+  background: var(--control);
   border: 1px solid var(--line);
   border-radius: 7px;
   padding: 0 10px;
@@ -219,7 +220,7 @@ select {
 
 .range-field span {
   justify-content: space-between;
-  gap: 12px;
+  gap: 16px;
 }
 
 output {
@@ -235,17 +236,17 @@ input[type="range"] {
 .color-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
+  gap: 12px;
 }
 
 .color-field {
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .color-field input {
-  height: 34px;
+  height: 38px;
   padding: 3px;
-  background: #f8faf9;
+  background: var(--control);
   border: 1px solid var(--line);
   border-radius: 7px;
 }
@@ -255,7 +256,7 @@ input[type="range"] {
   align-items: start;
   color: var(--ink);
   font-weight: 600;
-  line-height: 1.35;
+  line-height: 1.5;
 }
 
 .checkbox-field input {
@@ -268,5 +269,5 @@ input[type="range"] {
   min-height: 18px;
   justify-content: center;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 13px;
 }

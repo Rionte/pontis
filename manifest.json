@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "AccessEase Navigator",
+  "name": "Pontis",
   "version": "1.0.0",
   "description": "Customizable dyslexia and ADHD reading support for web pages.",
   "permissions": ["storage", "tabs"],
@@ -9,7 +9,7 @@
     "extension_pages": "script-src 'self'; style-src 'self' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net"
   },
   "action": {
-    "default_title": "AccessEase Navigator",
+    "default_title": "Pontis",
     "default_popup": "popup.html"
   },
   "content_scripts": [

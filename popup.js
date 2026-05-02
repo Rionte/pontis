@@ -2,12 +2,12 @@ const DEFAULT_SETTINGS = {
   dyslexia: {
     enabled: false,
     fontFamily: "OpenDyslexic, Comic Sans MS, Trebuchet MS, Verdana, Arial, sans-serif",
-    textSize: 17,
+    textSize: 18,
     lineHeight: 1.6,
     boldRandomWords: false,
     boldFrequency: 16,
     removeDecorations: false,
-    textColor: "#5f6670"
+    textColor: "#727982"
   },
   adhd: {
     enabled: false,
@@ -159,8 +159,14 @@ function normalizeFontFamily(fontFamily) {
 }
 
 function mergeSettings(base, updates) {
-  return {
+  const merged = {
     dyslexia: { ...base.dyslexia, ...(updates.dyslexia || {}) },
     adhd: { ...base.adhd, ...(updates.adhd || {}) }
   };
+
+  if ((updates.dyslexia || {}).textSize === 17) {
+    merged.dyslexia.textSize = base.dyslexia.textSize;
+  }
+
+  return merged;
 }
